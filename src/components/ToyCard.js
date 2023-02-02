@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 
-function ToyCard() {
+function ToyCard({toy, handleDelete}) {
+  const {name, image, likes} = toy;
+  const [curLikes, setcurLikes] = useState(likes)
+  
+  const handleLikeBtn = () => {
+    fetch(`http://localhost:3001/toys/${toy.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({likes: curLikes + 1}),
+    })
+    .then(res => res.json())
+    .then(res => setcurLikes(res.likes))
+  }
+
   return (
     <div className="card">
-      <h2>{"" /* Toy's Name */}</h2>
+      <h2>{name}</h2>
       <img
-        src={"" /* Toy's Image */}
-        alt={"" /* Toy's Name */}
+        src={image}
+        alt={name}
         className="toy-avatar"
       />
-      <p>{"" /* Toy's Likes */} Likes </p>
-      <button className="like-btn">Like {"<3"}</button>
-      <button className="del-btn">Donate to GoodWill</button>
+      <p>{curLikes} Likes </p>
+      <button className="like-btn" onClick={handleLikeBtn}>Like {"<3"}</button>
+      <button className="del-btn" onClick={() => handleDelete(toy)}>Donate to GoodWill</button>
     </div>
   );
 }
